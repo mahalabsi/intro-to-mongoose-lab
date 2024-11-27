@@ -8,71 +8,69 @@ const connect = async () => {
   console.log('Connected to the database')
 
   console.log('Welcome to the CRM')
+  while (true) {
+    const choice = prompt(
+      'What would you like to do?\n' +
+        '  1. Create a customer\n' +
+        '  2. View all customers\n' +
+        '  3. Update a customer\n' +
+        '  4. Delete a customer\n' +
+        '  5. Quit\n'
+    )
 
-  const choice = prompt(
-    'What would you like to do?\n' +
-      '  1. Create a customer\n' +
-      '  2. View all customers\n' +
-      '  3. Update a customer\n' +
-      '  4. Delete a customer\n' +
-      '  5. Quit\n'
-  )
+    console.log(`Your choice is ${choice}`)
 
-  console.log(`Your choice is ${choice}`)
-
-  if (choice === '1') {
-    // Add code for creating a customer
-  } else if (choice === '2') {
-    await allCustomers()
-  } else if (choice === '3') {
-    await updateCustomer()
-  } else if (choice === '4') {
-    // Add code for deleting a customer
-  } else if (choice === '5') {
-    console.log('Exiting...')
-    await mongoose.disconnect()
-    console.log('Disconnected from the database')
-    process.exit()
-  } else {
-    console.log('Invalid choice. Please try again.')
+    if (choice === '1') {
+      console.log('Creating a customer...')
+    } else if (choice === '2') {
+      await allCustomers()
+      continue
+    } else if (choice === '3') {
+      await updateCustomer()
+      continue
+    } else if (choice === '4') {
+      console.log('Deleting a customer...')
+      deleteCustomer()
+    } else if (choice === '5') {
+      console.log('Exiting...')
+      break
+    } else {
+      console.log('Invalid choice. Please try again.')
+    }
   }
+
+  await mongoose.disconnect()
+  console.log('Disconnected from the database')
+  process.exit()
 }
 
 const updateCustomer = async () => {
-  const customers = await Customer.find()
-  customers.forEach((customer) =>
-    console.log(
-      `id: ${customer._id}, Name: ${customer.name}, Age: ${customer.age}`
-    )
-  )
-
-  const customerId = prompt(
-    'Copy and paste the ID of the customer you would like to update here: '
-  )
-  const newName = prompt("Enter the customer's new name: ")
-  const newAge = prompt("Enter the customer's new age: ")
-
-  const customerToUpdate = await Customer.findById(customerId)
-
-  if (customerToUpdate) {
-    customerToUpdate.name = newName
-    customerToUpdate.age = newAge
-    await customerToUpdate.save()
-
-    console.log('Customer updated successfully.')
-  } else {
-    console.log('Customer not found.')
-  }
+  // await allCustomers()
+  const updateId = prompt('Input the ID of the customer you want to update ')
+  const customer = await Customer.findByIdAndUpdate(updateId)
+  const updatedName = prompt('Input upadated name')
+  const updatedAge = prompt('input updated age')
+  const updateData = { name: updatedName, age: updatedAge }
+  await Customer.findByIdAndUpdate(updateId, updateData)
+  // await allCustomers()
 }
 
-const allCustomers = async () => {
-  const allCustomers = await Customer.find()
-  console.log('All customers:')
-  allCustomers.forEach((customer) =>
-    console.log(
-      `id: ${customer._id} -- Name: ${customer.name}, Age: ${customer.age}`
-    )
-  )
+// const allCustomers = async () => {
+//   const allCustomers = await Customer.find()
+
+//   console.log('All customers:')
+//   allCustomers.forEach((customer) =>
+//     console.log(
+//       `id: ${customer._id} -- Name: ${customer.name}, Age: ${customer.age}`
+//     )
+//   )
+// }
+
+const deleteCustomer = async () => {
+  let id = ''
+  const inputId = prompt('input the id of the customer you want to delete')
+  const removeId = await allCustomers.findByIdAndDelete(id)
+  console.log('Removed Customer:', removeId)
 }
 
 connect()
