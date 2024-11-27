@@ -22,8 +22,9 @@ const connect = async () => {
 
     if (choice === '1') {
       console.log('Creating a customer...')
+      createCustomer()
     } else if (choice === '2') {
-      await allCustomers()
+      await theCustomers()
       continue
     } else if (choice === '3') {
       await updateCustomer()
@@ -44,32 +45,55 @@ const connect = async () => {
   process.exit()
 }
 
-const updateCustomer = async () => {
-  // await allCustomers()
+// queries.js
+
+// const createTodo = async () => {
+
+//   const todoData = {
+//     text: "Learn JS",
+//     isComplete: false,
+//   };
+
+//   const todo = await Todo.create(todoData);
+//   console.log("New todo:", todo);
+// };
+const createCustomer = async () => {
+  // Prompt for name and age
+  const customName = prompt('Enter name')
+  let age = parseInt(prompt('Enter age')) // Convert to integer
+
+  // Create customer object
+  const customerList = {
+    name: customName,
+    age: age
+  }
+  await Customer.create(customerList)
+}
+
+async function updateCustomer() {
   const updateId = prompt('Input the ID of the customer you want to update ')
   const customer = await Customer.findByIdAndUpdate(updateId)
   const updatedName = prompt('Input upadated name')
   const updatedAge = prompt('input updated age')
   const updateData = { name: updatedName, age: updatedAge }
   await Customer.findByIdAndUpdate(updateId, updateData)
-  // await allCustomers()
 }
 
-// const allCustomers = async () => {
-//   const allCustomers = await Customer.find()
+const theCustomers = async () => {
+  const customers = await Customer.find()
 
-//   console.log('All customers:')
-//   allCustomers.forEach((customer) =>
-//     console.log(
-//       `id: ${customer._id} -- Name: ${customer.name}, Age: ${customer.age}`
-//     )
-//   )
-// }
+  console.log('All customers:')
+  customers.forEach((customer) => {
+    console.log(
+      `id: ${customer._id} -- Name: ${customer.name}, Age: ${customer.age}`
+    )
+  })
+}
 
 const deleteCustomer = async () => {
   let id = ''
   const inputId = prompt('input the id of the customer you want to delete')
-  const removeId = await allCustomers.findByIdAndDelete(id)
+  const removeId = await Customer.findByIdAndDelete(id)
   console.log('Removed Customer:', removeId)
 }
 
